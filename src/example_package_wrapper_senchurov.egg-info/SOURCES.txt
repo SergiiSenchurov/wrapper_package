@@ -1,8 +1,0 @@
-LICENSE
-README.md
-pyproject.toml
-setup.cfg
-src/example_package_wrapper_senchurov.egg-info/PKG-INFO
-src/example_package_wrapper_senchurov.egg-info/SOURCES.txt
-src/example_package_wrapper_senchurov.egg-info/dependency_links.txt
-src/example_package_wrapper_senchurov.egg-info/top_level.txt
