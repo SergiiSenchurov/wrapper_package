@@ -17,7 +17,7 @@ python3 -m pip install --upgrade build # once
 python3 -m build 
 ```
 
-@@@Frequently used commands
+### Frequently used commands
 
 ```
 # once
@@ -32,7 +32,7 @@ deactivate
 
 ```
 
-@ PYTHONPATH
+### PYTHONPATH
 
 Edit tutorial/bin/activate and add
 ```
