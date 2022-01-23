@@ -1,2 +1,4 @@
 from wrapper_package import wrapper
-assert wrapper.add_one(2) == 3
+
+def test_add_one():
+    assert wrapper.add_one(2) == 3
