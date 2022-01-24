@@ -23,20 +23,6 @@ class post(object):
     _body : str
 
 
-    # def __init__(self, userId: Optional[int] = 0, id: Optional[int] = 0, title: Optional[str] = "", body: Optional[str] = "") -> None:
-    #     """[summary]
-
-    #     Args:
-    #         userId (Optional[int], optional): [description]. Defaults to 0.
-    #         id (Optional[int], optional): [description]. Defaults to 0.
-    #         title (Optional[str], optional): [description]. Defaults to "".
-    #         body (Optional[str], optional): [description]. Defaults to "".
-    #     """
-    #     self._userId = userId
-    #     self._id = id
-    #     self._title = title
-    #     self._body = body
-
     def __init__(self, **kwargs) -> None:
         """[summary]
         Args:
@@ -122,20 +108,17 @@ class post(object):
 # End post class
 ###########################################################################################   
 
-
 def get_posts() -> List[post]:
     """[summary]
+        # GET /posts
 
     Returns:
         List[post]: [description]
     """
 
-    # GET /posts
-    print("GET /posts")
     execution_result = []
-
     url = URL
-    print("url: ",url)
+
     try:
         response = requests.get(url)
         response.raise_for_status()
@@ -159,15 +142,8 @@ def get_posts() -> List[post]:
                 break
 
             json_response_wrapper = post(post_dict = post_dict)
-
             execution_result.append(json_response_wrapper)
-            print(json_response_wrapper)
 
-
-        # for json_response in json_response_posts:
-        #     json_response_wrapper = post(json_response)
-        #     execution_result.append(json_response_wrapper)
-        #     print(json_response_wrapper)
     return execution_result
 # End get_posts()
 #########################################################################################
@@ -181,14 +157,9 @@ def get_post(id: int) -> post:
     Returns:
         post: post 
     """
-    
-    
-    # GET /posts/{id}
 
     json_response_wrapper = None
-    print(f"GET /posts/{id}")
     url = URL + '/' + str(id)
-    print("url: ",url)
 
     try:
         response = requests.get(url)
@@ -200,17 +171,18 @@ def get_post(id: int) -> post:
     else:
         json_response = response.json()
         json_response_wrapper = post(post_dict = json_response)
-        print(json_response_wrapper)    
+
+    # print(f"GET /posts/{id}")
+    # print("url: ",url)
+    # print(json_response_wrapper)    
+    
     return json_response_wrapper
 # End get_post(id)
 #########################################################################################
 
-
-
-
 def post_posts(posts: List[post]) -> List[post]:
     """[summary]
-
+        POST /posts
     Args:
         posts (List[post]): [description]
 
@@ -218,15 +190,14 @@ def post_posts(posts: List[post]) -> List[post]:
         List[post]: [description]
     """
 
+    execution_result = []    
+    url = URL
+    json_payload = []
+
     # POST /posts
     # print("==================================================================")
-    print("POST /posts")
-    execution_result = []
-    
-    url = URL
-    print("url: ",url)
-
-    json_payload = []
+    # print("POST /posts")
+    # print("url: ",url)
 
     if isinstance(posts,list):    
         # a list of post objects passed 
@@ -245,7 +216,6 @@ def post_posts(posts: List[post]) -> List[post]:
     except Exception as err:
         print(f'Other error occurred: {err}')  
     else:
-        print('Success!')
         json_response_posts = response.json()
 
         for json_response in json_response_posts:
@@ -262,31 +232,24 @@ def post_posts(posts: List[post]) -> List[post]:
             json_response_wrapper = post(post_dict = post_dict)
 
             execution_result.append(json_response_wrapper)
-            print(json_response_wrapper)
+            # print(json_response_wrapper)
 
     return execution_result
-# End put_posts(List[post])
+# End post_posts(List[post])
 #########################################################################################
 
-
 def put_post(thepost: post) -> post:
-    """[summary]
+    """PUT /posts/{id}
 
     Args:
-        thepost (post): [description]
+        thepost (post): post object to put
 
     Returns:
-        post: [description]
+        post: returned result
     """
 
-    # PUT /posts/{id}
-    # print("==================================================================")
-    print("PUT /posts/{id}")
-    json_response_wrapper = None
-    
+    json_response_wrapper = None    
     url = URL + '/' + str(thepost.id)
-    print("url: ",url)
-
     json_payload = thepost.todict()
 
     try:
@@ -299,27 +262,28 @@ def put_post(thepost: post) -> post:
     else:
         json_response_posts = response.json()
         json_response_wrapper = post(post_dict = json_response_posts)
-        print(json_response_wrapper)
+
+        # PUT /posts/{id}
+        # print("==================================================================")
+        # print("PUT /posts/{id}")
+        # print("url: ",url)
+        # print(json_response_wrapper)
     return json_response_wrapper
 # End put_post(post)
 #########################################################################################
+
 def delete_post(thepost: post) -> bool:
     """ delete post by post.id
-
+    DELETE /posts/{id}
     Args:
         thepost (post): post(id=id) - post to be deleted
 
     Returns:
         bool: true is success
     """
-    # DELETE /posts/{id}
-    # print("==================================================================")
 
-    print("DELETE /posts/{id}")
     result = False
-
     url = URL + '/' + str(thepost.id)
-    print("url: ",url)
 
     try:
         response = requests.delete(url,json = {"id":thepost.id})
@@ -330,12 +294,17 @@ def delete_post(thepost: post) -> bool:
         print(f'Other error occurred: {err}')  
     else:
         json_response_posts = response.json()
-        print("len(json_response_posts):",len(json_response_posts))
         if len(json_response_posts) == 0:
             result = True
+
+    # DELETE /posts/{id}
+    # print("==================================================================")
+    # print("DELETE /posts/{id}")
+    # print("url: ",url)
+
+
 
     return result
 # End delete_post(post)
 #########################################################################################
-
 
