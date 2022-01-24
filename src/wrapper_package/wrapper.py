@@ -1,7 +1,5 @@
 import json
-import os
-import string
-from typing import Iterable, Optional, List
+from typing import List
 import requests
 from requests.exceptions import HTTPError
 
