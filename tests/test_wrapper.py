@@ -23,6 +23,9 @@ def test_get_post():
 @pytest.mark.filterwarnings('ignore:ssl.*')
 def test_delete_post():
     assert wrapper.delete_post(wrapper.post(id=2)) == True
+    with pytest.raises(ValueError):
+        wrapper.delete_post(3.33)
+        wrapper.delete_post(None)  
 
 # @pytest.mark.filterwarnings('ignore:ssl.*')
 # def test_get_post():

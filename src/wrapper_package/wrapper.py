@@ -266,8 +266,6 @@ def delete_post(thepost: post) -> bool:
     url = URL + '/' + str(thepost.id)
 
     response = requests.delete(url,json = {"id":thepost.id})
-    if not (response.status_code == requests.codes.ok):
-        raise HTTPError
     
     json_response_posts = response.json()
     if len(json_response_posts) == 0:
@@ -276,3 +274,4 @@ def delete_post(thepost: post) -> bool:
     return result
 # End delete_post(post)
 #########################################################################################
+delete_post(post(id=-200))
