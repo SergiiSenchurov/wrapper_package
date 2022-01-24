@@ -1,11 +1,17 @@
 import json
 import os
 import string
-import typing
+from typing import List
 import requests
 from requests.exceptions import HTTPError
 
-class wrapper(object):
+URL = 'https://jsonplaceholder.typicode.com/posts'
+
+class post(object):
+    _userId : int
+    _id : int
+    _title : str
+    _body : str
     """[summary]
 
     Args:
@@ -26,7 +32,6 @@ class wrapper(object):
     def userId(self, new_ID: int) -> None:
         self._userId = new_ID
 
-    
     @property
     def id(self) -> int:
         return self._id
@@ -36,67 +41,135 @@ class wrapper(object):
         self._id = new_ID
 
     @property
-    def title(self) -> string:
+    def title(self) -> str:
         return self._title
 
     @title.setter
-    def title(self, new_title: string) -> None:
+    def title(self, new_title: str) -> None:
         self._title = new_title
 
     @property
-    def body(self) -> string:
+    def body(self) -> str:
         return self._body
 
     @body.setter
-    def body(self, new_value: string) -> None:
+    def body(self, new_value: str) -> None:
         self._body = new_value
 
+def get_posts() -> List[post]:
+    """[summary]
 
-# GET /posts
-print("GET /posts")
+    Returns:
+        [type]: [description]
+    """
 
-try:
-    response = requests.get('https://jsonplaceholder.typicode.com/posts')
-    response.raise_for_status()
-except HTTPError as http_err:
-    print(f'HTTP error occurred: {http_err}')  # Python 3.6
-except Exception as err:
-    print(f'Other error occurred: {err}')  # Python 3.6
-else:
-    print('Success!')
-    json_response_posts = response.json()
-    for json_response in json_response_posts:
-        # print(json_response)
-        json_response_wrapper = wrapper(json_response["userId"],json_response["id"],
+    # GET /posts
+    print("GET /posts")
+    execution_result = []
+
+    url = URL
+    print("url: ",url)
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+    except HTTPError as http_err:
+        print(f'HTTP error occurred: {http_err}')  
+    except Exception as err:
+        print(f'Other error occurred: {err}')  
+    else:
+        json_response_posts = response.json()
+
+        for json_response in json_response_posts:
+            json_response_wrapper = post(json_response["userId"],json_response["id"],
                                     json_response["title"],json_response["body"])
+            execution_result.append(json_response_wrapper)
+            print("userId: ",json_response_wrapper.userId)
+            print("id: ",json_response_wrapper.id)
+            print("title: ",json_response_wrapper.title)
+            print("body: ",json_response_wrapper.body)
+            print("============================================")
+    
+    return execution_result
+
+
+def get_post(id: int) -> post:
+    """GET /posts/{id}
+
+    Args:
+        id (int): [description]
+
+    Returns:
+        post: post 
+    """
+    
+    
+    # GET /posts/{id}
+
+    json_response_wrapper = None
+    
+
+
+    print(f"GET /posts/{id}")
+
+    url = URL + '/' + str(id)
+    print("url: ",url)
+
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+    except HTTPError as http_err:
+        print(f'HTTP error occurred: {http_err}') 
+    except Exception as err:
+        print(f'Other error occurred: {err}')  
+    else:
+        json_response = response.json()
+        json_response_wrapper = post(json_response["userId"],json_response["id"],
+                                json_response["title"],json_response["body"])
         print("userId: ",json_response_wrapper.userId)
         print("id: ",json_response_wrapper.id)
         print("title: ",json_response_wrapper.title)
         print("body: ",json_response_wrapper.body)
-        print("============================================")
+    
+    return json_response_wrapper
 
+def post_posts(posts: List[post]) -> List[post]:
+    """[summary]
 
-# GET /posts/{id}
+    Returns:
+        [type]: [description]
+    """
 
-print("GET /posts/{id}")
-ID = 3
-url = 'https://jsonplaceholder.typicode.com/posts/' + str(ID)
-print(url)
+    # GET /posts
+    print("POST /posts")
+    execution_result = []
 
-try:
-    response = requests.get(url)
-    response.raise_for_status()
-except HTTPError as http_err:
-    print(f'HTTP error occurred: {http_err}')  # Python 3.6
-except Exception as err:
-    print(f'Other error occurred: {err}')  # Python 3.6
-else:
-    print('Success!')
-    json_response = response.json()
-    json_response_wrapper = wrapper(json_response["userId"],json_response["id"],
-                                json_response["title"],json_response["body"])
-    print("userId: ",json_response_wrapper.userId)
-    print("id: ",json_response_wrapper.id)
-    print("title: ",json_response_wrapper.title)
-    print("body: ",json_response_wrapper.body)
+    url = URL
+    print("url: ",url)
 
+    try:
+        response = requests.post(url,json = posts)
+        response.raise_for_status()
+    except HTTPError as http_err:
+        print(f'HTTP error occurred: {http_err}')  
+    except Exception as err:
+        print(f'Other error occurred: {err}')  
+    else:
+        print('Success!')
+        json_response_posts = response.json()
+
+        for json_response in json_response_posts:
+            # print(json_response)
+            json_response_wrapper = post(json_response["userId"],json_response["id"],
+                                    json_response["title"],json_response["body"])
+            execution_result.append(json_response_wrapper)
+            print("userId: ",json_response_wrapper.userId)
+            print("id: ",json_response_wrapper.id)
+            print("title: ",json_response_wrapper.title)
+            print("body: ",json_response_wrapper.body)
+            print("============================================")
+    
+    return execution_result
+
+single_post = get_post(3)
+#get_posts()
+post_posts(single_post)
