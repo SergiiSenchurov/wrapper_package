@@ -274,4 +274,3 @@ def delete_post(thepost: post) -> bool:
     return result
 # End delete_post(post)
 #########################################################################################
-delete_post(post(id=-200))
