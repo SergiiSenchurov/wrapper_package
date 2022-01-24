@@ -33,7 +33,6 @@ python3 -m venv tutorial_env
 source tutorial_env/bin/activate
 python3 -m pip install --upgrade pip
 python3 -m pip install --upgrade build 
-pip install requests
 pip install "git+https://github.com/SergiiSenchurov/wrapper_package"
 
 # every (re)build

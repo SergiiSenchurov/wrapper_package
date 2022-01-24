@@ -27,7 +27,8 @@ class post(object):
             userId (Optional[int], optional): [description]. Defaults to 0.
             id (Optional[int], optional): [description]. Defaults to 0.
             title (Optional[str], optional): [description]. Defaults to "".
-            body (Optional[str], optional): [description]. Defaults to "".        
+            body (Optional[str], optional): [description]. Defaults to "". 
+            post_dict: complete dictionary with values     
         """
         userId = int(kwargs.get("userId",0))
         id = int(kwargs.get("id",0))
@@ -35,10 +36,16 @@ class post(object):
         body = str(kwargs.get("body",""))
         post_dict = kwargs.get("post_dict",None)
         if isinstance(post_dict, dict):
-            self._userId = post_dict["userId"]
-            self._id = post_dict["id"]
-            self._title = post_dict["title"]
-            self._body = post_dict["body"]
+            try:
+                self._userId = int(post_dict["userId"])
+                self._id = int(post_dict["id"])
+                self._title = str(post_dict["title"])
+                self._body = str(post_dict["body"])
+            except KeyError:
+                self._userId = userId
+                self._id = id
+                self._title = title
+                self._body = body
         else:
             self._userId = userId
             self._id = id
@@ -117,30 +124,26 @@ def get_posts() -> List[post]:
     execution_result = []
     url = URL
 
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-    except HTTPError as http_err:
-        print(f'HTTP error occurred: {http_err}')  
-    except Exception as err:
-        print(f'Other error occurred: {err}')  
-    else:
-        json_response_posts = response.json()
+    response = requests.get(url)
+    if not (response.status_code == requests.codes.ok):
+        raise HTTPError
 
-        # iterate posts
-        for json_response in json_response_posts:
-            if type(json_response) is dict:
-                # a list of posts
-                post_dict = json_response
+    json_response_posts = response.json()
 
-            elif type(json_response_posts[json_response]) is dict:   
-                # a single post
-                post_dict = json_response_posts[json_response] 
-            else:
-                break
+    # iterate posts
+    for json_response in json_response_posts:
+        if type(json_response) is dict:
+            # a list of posts
+            post_dict = json_response
 
-            json_response_wrapper = post(post_dict = post_dict)
-            execution_result.append(json_response_wrapper)
+        elif type(json_response_posts[json_response]) is dict:   
+            # a single post
+            post_dict = json_response_posts[json_response] 
+        else:
+            break
+
+        json_response_wrapper = post(post_dict = post_dict)
+        execution_result.append(json_response_wrapper)
 
     return execution_result
 # End get_posts()
@@ -155,6 +158,8 @@ def get_post(id: int) -> post:
     Returns:
         post: post 
     """
+    if not type(id) is int:
+        raise ValueError("Integer post id required")
 
     json_response_wrapper = None
     url = URL + '/' + str(id)
@@ -163,21 +168,6 @@ def get_post(id: int) -> post:
         raise HTTPError
     json_response = response.json()
     json_response_wrapper = post(post_dict = json_response)
-
-    # try:
-    #     response = requests.get(url)
-    #     response.raise_for_status()
-    # except HTTPError as http_err:
-    #     print(f'HTTP error occurred: {http_err}') 
-    # except Exception as err:
-    #     print(f'Other error occurred: {err}')  
-    # else:
-    #     json_response = response.json()
-    #     json_response_wrapper = post(post_dict = json_response)
-
-    # print(f"GET /posts/{id}")
-    # print("url: ",url)
-    # print(json_response_wrapper)    
     
     return json_response_wrapper
 # End get_post(id)
@@ -197,45 +187,38 @@ def post_posts(posts: List[post]) -> List[post]:
     url = URL
     json_payload = []
 
-    # POST /posts
-    # print("==================================================================")
-    # print("POST /posts")
-    # print("url: ",url)
-
     if isinstance(posts,list):    
         # a list of post objects passed 
         for thepost in posts:
+            if not (isinstance(thepost,post)):
+                raise ValueError
             json_payload.append(thepost.todict())
 
     elif isinstance(posts,post):
         # a single post object passed
         json_payload.append(posts.todict())
-
-    try:
-        response = requests.post(url,json = json_payload)
-        response.raise_for_status()
-    except HTTPError as http_err:
-        print(f'HTTP error occurred: {http_err}')  
-    except Exception as err:
-        print(f'Other error occurred: {err}')  
     else:
-        json_response_posts = response.json()
+        raise ValueError("List of posts or a single post required")
 
-        for json_response in json_response_posts:
-            if type(json_response) is dict:
-                # a list of posts
-                post_dict = json_response
+    response = requests.post(url,json = json_payload)
+    if not (response.status_code == requests.codes.ok):
+        raise HTTPError
+    json_response_posts = response.json()
 
-            elif type(json_response_posts[json_response]) is dict:   
-                # a single post
-                post_dict = json_response_posts[json_response] 
-            else:
-                break
+    for json_response in json_response_posts:
+        if type(json_response) is dict:
+            # a list of posts
+            post_dict = json_response
 
-            json_response_wrapper = post(post_dict = post_dict)
+        elif type(json_response_posts[json_response]) is dict:   
+            # a single post
+            post_dict = json_response_posts[json_response] 
+        else:
+            break
 
-            execution_result.append(json_response_wrapper)
-            # print(json_response_wrapper)
+        json_response_wrapper = post(post_dict = post_dict)
+
+        execution_result.append(json_response_wrapper)
 
     return execution_result
 # End post_posts(List[post])
@@ -250,27 +233,19 @@ def put_post(thepost: post) -> post:
     Returns:
         post: returned result
     """
+    if not isinstance(thepost,post):
+        raise ValueError("Post required")
 
     json_response_wrapper = None    
     url = URL + '/' + str(thepost.id)
     json_payload = thepost.todict()
 
-    try:
-        response = requests.put(url,json = json_payload)
-        response.raise_for_status()
-    except HTTPError as http_err:
-        print(f'HTTP error occurred: {http_err}')  
-    except Exception as err:
-        print(f'Other error occurred: {err}')  
-    else:
-        json_response_posts = response.json()
-        json_response_wrapper = post(post_dict = json_response_posts)
+    response = requests.put(url,json = json_payload)
+    if not (response.status_code == requests.codes.ok):
+        raise HTTPError
+    json_response_posts = response.json()
+    json_response_wrapper = post(post_dict = json_response_posts)
 
-        # PUT /posts/{id}
-        # print("==================================================================")
-        # print("PUT /posts/{id}")
-        # print("url: ",url)
-        # print(json_response_wrapper)
     return json_response_wrapper
 # End put_post(post)
 #########################################################################################
@@ -284,31 +259,20 @@ def delete_post(thepost: post) -> bool:
     Returns:
         bool: true is success
     """
+    if not isinstance(thepost,post):
+        raise ValueError("Post required")
 
     result = False
     url = URL + '/' + str(thepost.id)
 
-    try:
-        response = requests.delete(url,json = {"id":thepost.id})
-        response.raise_for_status()
-    except HTTPError as http_err:
-        print(f'HTTP error occurred: {http_err}')  
-    except Exception as err:
-        print(f'Other error occurred: {err}')  
-    else:
-        json_response_posts = response.json()
-        if len(json_response_posts) == 0:
-            result = True
-
-    # DELETE /posts/{id}
-    # print("==================================================================")
-    # print("DELETE /posts/{id}")
-    # print("url: ",url)
-
-
+    response = requests.delete(url,json = {"id":thepost.id})
+    if not (response.status_code == requests.codes.ok):
+        raise HTTPError
+    
+    json_response_posts = response.json()
+    if len(json_response_posts) == 0:
+        result = True
 
     return result
 # End delete_post(post)
 #########################################################################################
-
-# get_post(id=-200)

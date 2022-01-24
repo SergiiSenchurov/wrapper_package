@@ -3,6 +3,12 @@ from wrapper_package import wrapper
 from requests.exceptions import HTTPError
 
 @pytest.mark.filterwarnings('ignore:ssl.*')
+def test_get_posts():
+    multiple_posts = wrapper.get_posts()
+    assert isinstance(multiple_posts,list)
+    assert isinstance(multiple_posts[0],wrapper.post)
+
+@pytest.mark.filterwarnings('ignore:ssl.*')
 def test_delete_post():
     assert wrapper.delete_post(wrapper.post(id=2)) == True
 
