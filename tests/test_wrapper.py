@@ -2,7 +2,7 @@ import pytest
 from wrapper_package import wrapper
 from requests.exceptions import HTTPError
 
-from wrapper_package.src.wrapper_package.wrapper import put_post
+# from wrapper_package.src.wrapper_package.wrapper import put_post
 
 @pytest.mark.filterwarnings('ignore:ssl.*')
 def test_get_posts():
@@ -39,9 +39,10 @@ def test_put_post():
 
 @pytest.mark.filterwarnings('ignore:ssl.*')
 def test_post_posts():
-    single_post = wrapper.post_posts(wrapper.post(id=2))
+    single_post = wrapper.get_post(id=2)
+    # single_post = wrapper.post_posts(wrapper.post(id=2,userId = 1, title = "aaa", body="bbb"))
     single_post = wrapper.post_posts(single_post)
-    multiple_posts = [wrapper.post(id=3),wrapper.post(id=-200)]
+    multiple_posts = [wrapper.post(id=3),wrapper.post(id=20)]
     multiple_posts = wrapper.post_posts(multiple_posts)
     assert isinstance(single_post,list)
     assert isinstance(multiple_posts,list)

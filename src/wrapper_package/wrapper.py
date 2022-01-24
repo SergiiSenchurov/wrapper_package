@@ -199,10 +199,8 @@ def post_posts(posts: List[post]) -> List[post]:
         json_payload.append(posts.todict())
     else:
         raise ValueError("List of posts or a single post required")
-
+    
     response = requests.post(url,json = json_payload)
-    if not (response.status_code == requests.codes.ok):
-        raise HTTPError
     json_response_posts = response.json()
 
     for json_response in json_response_posts:
@@ -274,3 +272,8 @@ def delete_post(thepost: post) -> bool:
     return result
 # End delete_post(post)
 #########################################################################################
+single_post = get_post(id = 2)
+print(single_post)
+# multiple_posts = get_posts()
+# print(multiple_posts)
+print(post_posts(single_post))
