@@ -12,10 +12,12 @@ to write your content. -->
 ```
 delete_post(post(id=2))
 single_post = get_post(id = 2)
+print(single_post)
 multiple_posts = get_posts()
-post_posts(single_post)
-post_posts(multiple_posts)
-put_post(single_post)
+print(multiple_posts)
+print(post_posts(single_post))
+print(post_posts(multiple_posts))
+print(put_post(single_post))
 print(post(id=3))
 ```
 
