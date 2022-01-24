@@ -1,5 +1,5 @@
 import json
-from typing import List
+from typing import List, Optional
 import requests
 from requests.exceptions import HTTPError
 
@@ -149,7 +149,7 @@ def get_posts() -> List[post]:
 # End get_posts()
 #########################################################################################
 
-def get_post(id: int) -> post:
+def get_post(id: Optional[int] = 0) -> post:
     """GET /posts/{id}
 
     Args:

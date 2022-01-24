@@ -8,19 +8,26 @@ def test_get_posts():
     assert isinstance(multiple_posts,list)
     assert isinstance(multiple_posts[0],wrapper.post)
 
-@pytest.mark.filterwarnings('ignore:ssl.*')
-def test_delete_post():
-    assert wrapper.delete_post(wrapper.post(id=2)) == True
+
 
 @pytest.mark.filterwarnings('ignore:ssl.*')
 def test_get_post():
     single_post = wrapper.get_post(id=2)
     assert isinstance(single_post,wrapper.post)
-
-@pytest.mark.filterwarnings('ignore:ssl.*')
-def test_get_post_info():
     with pytest.raises(HTTPError):
         wrapper.get_post(id=-200)
+    with pytest.raises(ValueError):
+        wrapper.get_post(3.33)
+        wrapper.get_post(None)    
+
+@pytest.mark.filterwarnings('ignore:ssl.*')
+def test_delete_post():
+    assert wrapper.delete_post(wrapper.post(id=2)) == True
+
+# @pytest.mark.filterwarnings('ignore:ssl.*')
+# def test_get_post():
+#     with pytest.raises(HTTPError):
+#         wrapper.get_post(id=-200)
 
 
 # delete_post(post(id=2))
