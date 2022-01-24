@@ -10,13 +10,11 @@ URL = 'https://jsonplaceholder.typicode.com/posts'
 #########################################################################################
 
 class post(object):
-    """[summary]
+    """post object. 
+    Contains userId, id, title and body. 
+    toJson
 
-    Args:
-        object ([type]): [description]
 
-    Returns:
-        [type]: [description]
     """
     
     _userId : int
@@ -25,17 +23,43 @@ class post(object):
     _body : str
 
 
-    def __init__(self, userId: Optional[int] = 0, id: Optional[int] = 0, title: Optional[str] = "", body: Optional[str] = "") -> None:
-        self._userId = userId
-        self._id = id
-        self._title = title
-        self._body = body
+    # def __init__(self, userId: Optional[int] = 0, id: Optional[int] = 0, title: Optional[str] = "", body: Optional[str] = "") -> None:
+    #     """[summary]
 
-    def __init__(self, post_dict: dict) -> None:
-        self._userId = post_dict["userId"]
-        self._id = post_dict["id"]
-        self._title = post_dict["title"]
-        self._body = post_dict["body"]
+    #     Args:
+    #         userId (Optional[int], optional): [description]. Defaults to 0.
+    #         id (Optional[int], optional): [description]. Defaults to 0.
+    #         title (Optional[str], optional): [description]. Defaults to "".
+    #         body (Optional[str], optional): [description]. Defaults to "".
+    #     """
+    #     self._userId = userId
+    #     self._id = id
+    #     self._title = title
+    #     self._body = body
+
+    def __init__(self, **kwargs) -> None:
+        """[summary]
+        Args:
+            userId (Optional[int], optional): [description]. Defaults to 0.
+            id (Optional[int], optional): [description]. Defaults to 0.
+            title (Optional[str], optional): [description]. Defaults to "".
+            body (Optional[str], optional): [description]. Defaults to "".        
+        """
+        userId = int(kwargs.get("userId",0))
+        id = int(kwargs.get("id",0))
+        title = str(kwargs.get("title",""))
+        body = str(kwargs.get("body",""))
+        post_dict = kwargs.get("post_dict",None)
+        if isinstance(post_dict, dict):
+            self._userId = post_dict["userId"]
+            self._id = post_dict["id"]
+            self._title = post_dict["title"]
+            self._body = post_dict["body"]
+        else:
+            self._userId = userId
+            self._id = id
+            self._title = title
+            self._body = body
 
     def __repr__(self):
         post_string = "============================================\n<post object> \n"
@@ -79,6 +103,11 @@ class post(object):
         self._body = new_value
 
     def toJson(self):
+        """ serializes post object into json record
+
+        Returns:
+            [type]: [description]
+        """
         datadict = {"userId": self._userId, "id": self._id, "title": self._title, "body":self._body}
         return json.dumps(self, datadict)
 
@@ -98,7 +127,7 @@ def get_posts() -> List[post]:
     """[summary]
 
     Returns:
-        [type]: [description]
+        List[post]: [description]
     """
 
     # GET /posts
@@ -117,17 +146,28 @@ def get_posts() -> List[post]:
     else:
         json_response_posts = response.json()
 
+        # iterate posts
         for json_response in json_response_posts:
-            json_response_wrapper = post(json_response)
+            if type(json_response) is dict:
+                # a list of posts
+                post_dict = json_response
+
+            elif type(json_response_posts[json_response]) is dict:   
+                # a single post
+                post_dict = json_response_posts[json_response] 
+            else:
+                break
+
+            json_response_wrapper = post(post_dict = post_dict)
+
             execution_result.append(json_response_wrapper)
             print(json_response_wrapper)
-            # print("userId: ",json_response_wrapper.userId)
-            # print("id: ",json_response_wrapper.id)
-            # print("title: ",json_response_wrapper.title)
-            # print("body: ",json_response_wrapper.body)
-            # print("============================================")
-    
-    
+
+
+        # for json_response in json_response_posts:
+        #     json_response_wrapper = post(json_response)
+        #     execution_result.append(json_response_wrapper)
+        #     print(json_response_wrapper)
     return execution_result
 # End get_posts()
 #########################################################################################
@@ -146,11 +186,7 @@ def get_post(id: int) -> post:
     # GET /posts/{id}
 
     json_response_wrapper = None
-    
-
-
     print(f"GET /posts/{id}")
-
     url = URL + '/' + str(id)
     print("url: ",url)
 
@@ -163,13 +199,8 @@ def get_post(id: int) -> post:
         print(f'Other error occurred: {err}')  
     else:
         json_response = response.json()
-        json_response_wrapper = post(json_response)
-        print(json_response_wrapper)
-        # print("userId: ",json_response_wrapper.userId)
-        # print("id: ",json_response_wrapper.id)
-        # print("title: ",json_response_wrapper.title)
-        # print("body: ",json_response_wrapper.body)
-    
+        json_response_wrapper = post(post_dict = json_response)
+        print(json_response_wrapper)    
     return json_response_wrapper
 # End get_post(id)
 #########################################################################################
@@ -180,8 +211,11 @@ def get_post(id: int) -> post:
 def post_posts(posts: List[post]) -> List[post]:
     """[summary]
 
+    Args:
+        posts (List[post]): [description]
+
     Returns:
-        [type]: [description]
+        List[post]: [description]
     """
 
     # POST /posts
@@ -193,9 +227,6 @@ def post_posts(posts: List[post]) -> List[post]:
     print("url: ",url)
 
     json_payload = []
-
-
-    # print ("type(posts):",type(posts))
 
     if isinstance(posts,list):    
         # a list of post objects passed 
@@ -217,12 +248,7 @@ def post_posts(posts: List[post]) -> List[post]:
         print('Success!')
         json_response_posts = response.json()
 
-        # print("json_response_posts:",json_response_posts)
-        # print(type(json_response_posts))
-        # print(len(json_response_posts))
-
         for json_response in json_response_posts:
-            #print(json_response)
             if type(json_response) is dict:
                 # a list of posts
                 post_dict = json_response
@@ -233,15 +259,10 @@ def post_posts(posts: List[post]) -> List[post]:
             else:
                 break
 
-            json_response_wrapper = post(post_dict)
+            json_response_wrapper = post(post_dict = post_dict)
 
             execution_result.append(json_response_wrapper)
             print(json_response_wrapper)
-            # print("userId: ",json_response_wrapper.userId)
-            # print("id: ",json_response_wrapper.id)
-            # print("title: ",json_response_wrapper.title)
-            # print("body: ",json_response_wrapper.body)
-            # print("============================================")
 
     return execution_result
 # End put_posts(List[post])
@@ -251,8 +272,11 @@ def post_posts(posts: List[post]) -> List[post]:
 def put_post(thepost: post) -> post:
     """[summary]
 
+    Args:
+        thepost (post): [description]
+
     Returns:
-        [type]: [description]
+        post: [description]
     """
 
     # PUT /posts/{id}
@@ -273,40 +297,45 @@ def put_post(thepost: post) -> post:
     except Exception as err:
         print(f'Other error occurred: {err}')  
     else:
-        print('Success!')
         json_response_posts = response.json()
-
-        # print("json_response_posts:",json_response_posts)
-        # print(type(json_response_posts))
-        # print(len(json_response_posts))
-
-        # for json_response in json_response_posts:
-        #     #print(json_response)
-        #     if type(json_response) is dict:
-        #         # a list of posts
-        #         post_dict = json_response
-
-        #     elif type(json_response_posts[json_response]) is dict:   
-        #         # a single post
-        #         post_dict = json_response_posts[json_response] 
-        #     else:
-        #         break
-
-        json_response_wrapper = post(json_response_posts)
+        json_response_wrapper = post(post_dict = json_response_posts)
         print(json_response_wrapper)
-        # print("userId: ",json_response_wrapper.userId)
-        # print("id: ",json_response_wrapper.id)
-        # print("title: ",json_response_wrapper.title)
-        # print("body: ",json_response_wrapper.body)
-        # print("============================================")
-
     return json_response_wrapper
-# End put_posts(post)
+# End put_post(post)
+#########################################################################################
+def delete_post(thepost: post) -> bool:
+    """ delete post by post.id
+
+    Args:
+        thepost (post): post(id=id) - post to be deleted
+
+    Returns:
+        bool: true is success
+    """
+    # DELETE /posts/{id}
+    # print("==================================================================")
+
+    print("DELETE /posts/{id}")
+    result = False
+
+    url = URL + '/' + str(thepost.id)
+    print("url: ",url)
+
+    try:
+        response = requests.delete(url,json = {"id":thepost.id})
+        response.raise_for_status()
+    except HTTPError as http_err:
+        print(f'HTTP error occurred: {http_err}')  
+    except Exception as err:
+        print(f'Other error occurred: {err}')  
+    else:
+        json_response_posts = response.json()
+        print("len(json_response_posts):",len(json_response_posts))
+        if len(json_response_posts) == 0:
+            result = True
+
+    return result
+# End delete_post(post)
 #########################################################################################
 
 
-single_post = get_post(3)
-multiple_posts = get_posts()
-#post_posts(single_post)
-post_posts(multiple_posts)
-put_post(single_post)

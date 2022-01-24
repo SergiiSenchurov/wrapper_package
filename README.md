@@ -7,7 +7,17 @@ See also [test task](https://gist.github.com/yevhenii-nepsha/c225c41fdb10750340d
 [Github-flavored Markdown](https://guides.github.com/features/mastering-markdown/)
 to write your content. -->
 
+#### Usage example
 
+```
+delete_post(post(id=2))
+single_post = get_post(id = 2)
+multiple_posts = get_posts()
+post_posts(single_post)
+post_posts(multiple_posts)
+put_post(single_post)
+print(post(id=3))
+```
 
 To install wrapper package use the following command line 
 ```
