@@ -160,7 +160,7 @@ def get_post(id: int) -> post:
     url = URL + '/' + str(id)
     response = requests.get(url)
     if not (response.status_code == requests.codes.ok):
-        raise HTTPError()
+        raise HTTPError
     json_response = response.json()
     json_response_wrapper = post(post_dict = json_response)
 
@@ -311,4 +311,4 @@ def delete_post(thepost: post) -> bool:
 # End delete_post(post)
 #########################################################################################
 
-get_post(id=-200)
+# get_post(id=-200)
