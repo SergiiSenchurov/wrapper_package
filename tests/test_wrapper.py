@@ -2,8 +2,6 @@ import pytest
 from wrapper_package import wrapper
 from requests.exceptions import HTTPError
 
-# from wrapper_package.src.wrapper_package.wrapper import put_post
-
 @pytest.mark.filterwarnings('ignore:ssl.*')
 def test_get_posts():
     multiple_posts = wrapper.get_posts()
@@ -39,8 +37,7 @@ def test_put_post():
 
 @pytest.mark.filterwarnings('ignore:ssl.*')
 def test_post_posts():
-    single_post = wrapper.get_post(id=2)
-    # single_post = wrapper.post_posts(wrapper.post(id=2,userId = 1, title = "aaa", body="bbb"))
+    single_post = wrapper.post_posts(wrapper.post(id=2))
     single_post = wrapper.post_posts(single_post)
     multiple_posts = [wrapper.post(id=3),wrapper.post(id=20)]
     multiple_posts = wrapper.post_posts(multiple_posts)
@@ -52,14 +49,3 @@ def test_post_posts():
         wrapper.post_posts(3.33)
         wrapper.post_posts(None)  
 
-
-
-# delete_post(post(id=2))
-# single_post = get_post(id = 2)
-# print(single_post)
-# multiple_posts = get_posts()
-# print(multiple_posts)
-# print(post_posts(single_post))
-# print(post_posts(multiple_posts))
-# print(put_post(single_post))
-# print(post(id=3))

@@ -272,8 +272,3 @@ def delete_post(thepost: post) -> bool:
     return result
 # End delete_post(post)
 #########################################################################################
-single_post = get_post(id = 2)
-print(single_post)
-# multiple_posts = get_posts()
-# print(multiple_posts)
-print(post_posts(single_post))
