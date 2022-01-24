@@ -37,6 +37,15 @@ class post(object):
         self._title = post_dict["title"]
         self._body = post_dict["body"]
 
+    def __repr__(self):
+        post_string = "============================================\n<post object> \n"
+        post_string += "userId: " + str(self._userId) + "\n"
+        post_string += "id: " + str(self._id) + "\n"
+        post_string += "title: \n" + self._title + "\n"
+        post_string += "body: \n" + self._body + "\n"
+        post_string += "============================================\n"
+        return post_string
+
     @property
     def userId(self) -> int:
         return self._userId
@@ -111,11 +120,12 @@ def get_posts() -> List[post]:
         for json_response in json_response_posts:
             json_response_wrapper = post(json_response)
             execution_result.append(json_response_wrapper)
-            print("userId: ",json_response_wrapper.userId)
-            print("id: ",json_response_wrapper.id)
-            print("title: ",json_response_wrapper.title)
-            print("body: ",json_response_wrapper.body)
-            print("============================================")
+            print(json_response_wrapper)
+            # print("userId: ",json_response_wrapper.userId)
+            # print("id: ",json_response_wrapper.id)
+            # print("title: ",json_response_wrapper.title)
+            # print("body: ",json_response_wrapper.body)
+            # print("============================================")
     
     
     return execution_result
@@ -154,10 +164,11 @@ def get_post(id: int) -> post:
     else:
         json_response = response.json()
         json_response_wrapper = post(json_response)
-        print("userId: ",json_response_wrapper.userId)
-        print("id: ",json_response_wrapper.id)
-        print("title: ",json_response_wrapper.title)
-        print("body: ",json_response_wrapper.body)
+        print(json_response_wrapper)
+        # print("userId: ",json_response_wrapper.userId)
+        # print("id: ",json_response_wrapper.id)
+        # print("title: ",json_response_wrapper.title)
+        # print("body: ",json_response_wrapper.body)
     
     return json_response_wrapper
 # End get_post(id)
@@ -225,18 +236,19 @@ def post_posts(posts: List[post]) -> List[post]:
             json_response_wrapper = post(post_dict)
 
             execution_result.append(json_response_wrapper)
-            print("userId: ",json_response_wrapper.userId)
-            print("id: ",json_response_wrapper.id)
-            print("title: ",json_response_wrapper.title)
-            print("body: ",json_response_wrapper.body)
-            print("============================================")
+            print(json_response_wrapper)
+            # print("userId: ",json_response_wrapper.userId)
+            # print("id: ",json_response_wrapper.id)
+            # print("title: ",json_response_wrapper.title)
+            # print("body: ",json_response_wrapper.body)
+            # print("============================================")
 
     return execution_result
 # End put_posts(List[post])
 #########################################################################################
 
 
-def put_posts(thepost: post) -> post:
+def put_post(thepost: post) -> post:
     """[summary]
 
     Returns:
@@ -246,27 +258,15 @@ def put_posts(thepost: post) -> post:
     # PUT /posts/{id}
     # print("==================================================================")
     print("PUT /posts/{id}")
-    execution_result = []
+    json_response_wrapper = None
     
-    url = URL
+    url = URL + '/' + str(thepost.id)
     print("url: ",url)
 
-    json_payload = []
-
-
-    print ("type(posts):",type(posts))
-
-    if isinstance(posts,list):    
-        # a list of post objects passed 
-        for thepost in posts:
-            json_payload.append(thepost.todict())
-
-    elif isinstance(posts,post):
-        # a single post object passed
-        json_payload.append(posts.todict())
+    json_payload = thepost.todict()
 
     try:
-        response = requests.post(url,json = json_payload)
+        response = requests.put(url,json = json_payload)
         response.raise_for_status()
     except HTTPError as http_err:
         print(f'HTTP error occurred: {http_err}')  
@@ -280,33 +280,33 @@ def put_posts(thepost: post) -> post:
         # print(type(json_response_posts))
         # print(len(json_response_posts))
 
-        for json_response in json_response_posts:
-            #print(json_response)
-            if type(json_response) is dict:
-                # a list of posts
-                post_dict = json_response
+        # for json_response in json_response_posts:
+        #     #print(json_response)
+        #     if type(json_response) is dict:
+        #         # a list of posts
+        #         post_dict = json_response
 
-            elif type(json_response_posts[json_response]) is dict:   
-                # a single post
-                post_dict = json_response_posts[json_response] 
-            else:
-                break
+        #     elif type(json_response_posts[json_response]) is dict:   
+        #         # a single post
+        #         post_dict = json_response_posts[json_response] 
+        #     else:
+        #         break
 
-            json_response_wrapper = post(post_dict)
+        json_response_wrapper = post(json_response_posts)
+        print(json_response_wrapper)
+        # print("userId: ",json_response_wrapper.userId)
+        # print("id: ",json_response_wrapper.id)
+        # print("title: ",json_response_wrapper.title)
+        # print("body: ",json_response_wrapper.body)
+        # print("============================================")
 
-            execution_result.append(json_response_wrapper)
-            print("userId: ",json_response_wrapper.userId)
-            print("id: ",json_response_wrapper.id)
-            print("title: ",json_response_wrapper.title)
-            print("body: ",json_response_wrapper.body)
-            print("============================================")
-
-    return execution_result
+    return json_response_wrapper
 # End put_posts(post)
 #########################################################################################
 
 
 single_post = get_post(3)
 multiple_posts = get_posts()
-post_posts(single_post)
-#post_posts(multiple_posts)
+#post_posts(single_post)
+post_posts(multiple_posts)
+put_post(single_post)
