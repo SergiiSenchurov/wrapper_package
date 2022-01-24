@@ -158,17 +158,21 @@ def get_post(id: int) -> post:
 
     json_response_wrapper = None
     url = URL + '/' + str(id)
+    response = requests.get(url)
+    response.raise_for_status()
+    json_response = response.json()
+    json_response_wrapper = post(post_dict = json_response)
 
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-    except HTTPError as http_err:
-        print(f'HTTP error occurred: {http_err}') 
-    except Exception as err:
-        print(f'Other error occurred: {err}')  
-    else:
-        json_response = response.json()
-        json_response_wrapper = post(post_dict = json_response)
+    # try:
+    #     response = requests.get(url)
+    #     response.raise_for_status()
+    # except HTTPError as http_err:
+    #     print(f'HTTP error occurred: {http_err}') 
+    # except Exception as err:
+    #     print(f'Other error occurred: {err}')  
+    # else:
+    #     json_response = response.json()
+    #     json_response_wrapper = post(post_dict = json_response)
 
     # print(f"GET /posts/{id}")
     # print("url: ",url)
@@ -305,3 +309,5 @@ def delete_post(thepost: post) -> bool:
     return result
 # End delete_post(post)
 #########################################################################################
+
+get_post(id=-200)

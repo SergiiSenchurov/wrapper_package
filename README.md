@@ -55,9 +55,9 @@ deactivate
 
 ```
 
-### PYTHONPATH
+#### PYTHONPATH
 
-Edit `tutorial/bin/activate` and add corresponding path to `site-packages`:
+If necessary (50/50), edit `tutorial/bin/activate` and add corresponding path to `site-packages` :
 ```
 export PYTHONPATH="/Users/sergii.senchurov/Documents/Ring/python_package/wrapper_package/tutorial_env/lib/python3.10/site-packages/"
 ```

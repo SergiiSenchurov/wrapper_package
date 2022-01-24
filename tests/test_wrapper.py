@@ -1,7 +1,20 @@
+import pytest
 from wrapper_package import wrapper
+from requests.exceptions import HTTPError
 
+@pytest.mark.filterwarnings('ignore:ssl.*')
 def test_delete_post():
-    assert wrapper.delete_post(post(id=2)) == True
+    assert wrapper.delete_post(wrapper.post(id=2)) == True
+
+@pytest.mark.filterwarnings('ignore:ssl.*')
+def test_get_post():
+    single_post = wrapper.get_post(id=2)
+    assert isinstance(single_post,wrapper.post)
+
+@pytest.mark.filterwarnings('ignore:ssl.*')
+def test_get_post_info():
+    with pytest.raises(HTTPError):
+        wrapper.get_post(id=-200)
 
 
 # delete_post(post(id=2))
