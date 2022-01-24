@@ -20,6 +20,7 @@ class post(object):
     _title : str
     _body : str
 
+
     def __init__(self, **kwargs) -> None:
         """[summary]
         Args:
@@ -60,6 +61,21 @@ class post(object):
         post_string += "============================================\n"
         return post_string
 
+    @property
+    def userId(self) -> int:
+        return self._userId
+    
+    @property
+    def id(self) -> int:
+        return self._id
+
+    @property
+    def title(self) -> str:
+        return self._title
+
+    @property
+    def body(self) -> str:
+        return self._body
 
     def toJson(self):
         """ serializes post object into json record
