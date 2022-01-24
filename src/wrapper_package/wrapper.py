@@ -159,7 +159,8 @@ def get_post(id: int) -> post:
     json_response_wrapper = None
     url = URL + '/' + str(id)
     response = requests.get(url)
-    response.raise_for_status()
+    if not (response.status_code == requests.codes.ok):
+        raise HTTPError()
     json_response = response.json()
     json_response_wrapper = post(post_dict = json_response)
 
