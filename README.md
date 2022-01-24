@@ -44,23 +44,6 @@ rm -rf tutorial_env/
 python3 -m build 
 ```
 
-### Frequently used commands
-
-```
-# once
-
-source tutorial_env/bin/activate  
-pip install pytest
-python3 -m pip install twine 
-
-# activate
-source tutorial_env/bin/activate
-
-# deactivate
-deactivate
-
-```
-
 #### PYTHONPATH
 
 If necessary (50/50), edit `tutorial/bin/activate` and add corresponding path to `site-packages` :
